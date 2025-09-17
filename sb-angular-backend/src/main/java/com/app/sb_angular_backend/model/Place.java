@@ -25,7 +25,7 @@ public class Place {
     private String description;
 
     @Column(name = "created", insertable = false, columnDefinition = "TIMESTAMPTZ")
-    private OffsetDateTime created_at;
+    private OffsetDateTime createdAt;
 
     @Column(name = "location", nullable = false, columnDefinition = "geometry(Point,4326)")
     private Point location;
@@ -58,12 +58,12 @@ public class Place {
         this.description = description;
     }
 
-    public OffsetDateTime getCreated_at() {
-        return created_at;
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(OffsetDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreated(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Point getLocation() {

@@ -1,7 +1,5 @@
 #!/bin/bash
 
 ./gradlew build --continuous &
-echo "done with first"
-sleep 5
-echo "done with wait"
+sleep 3
 ./gradlew bootRun

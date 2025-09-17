@@ -14,6 +14,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @WebMvcTest(PlaceController.class)
@@ -40,7 +43,8 @@ public class PlaceControllerTest {
                 placeRequest.getLongitude(),
                 placeRequest.getLatitude(),
                 placeRequest.getName(),
-                placeRequest.getDescription()
+                placeRequest.getDescription(),
+                OffsetDateTime.of(2025, 10, 10, 11, 11, 11, 0, ZoneOffset.UTC)
         );
 
         when(placeService.addNewPlace(any(PlaceRequest.class))).thenReturn(response);
