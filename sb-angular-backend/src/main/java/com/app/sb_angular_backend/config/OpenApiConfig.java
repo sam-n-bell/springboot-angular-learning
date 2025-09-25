@@ -55,12 +55,20 @@ import org.springframework.context.annotation.Configuration;
             // These should match what's configured in the Auth0 application permissions
             scopes = {
                 @io.swagger.v3.oas.annotations.security.OAuthScope(
+                        name = "add:employees",
+                        description = "Add new employee"
+                ),
+                @io.swagger.v3.oas.annotations.security.OAuthScope(
                             name = "read:employees",
-                            description = "Read Employee Data"
+                            description = "Read employee data"
                 ),
                 @io.swagger.v3.oas.annotations.security.OAuthScope(
                         name = "read:places",
-                        description = "Read places Data"
+                        description = "Read place data"
+                ),
+                @io.swagger.v3.oas.annotations.security.OAuthScope(
+                        name = "add:places",
+                        description = "Add new place"
                 )
             }
         )

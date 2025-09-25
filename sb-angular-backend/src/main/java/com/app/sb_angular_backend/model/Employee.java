@@ -2,6 +2,8 @@ package com.app.sb_angular_backend.model;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity // Marks class as a JPA entity that maps to a db table
@@ -26,6 +28,9 @@ public class Employee {
     @Convert(converter = LowerCaseStringConverter.class)
     private String email;
 
+    @OneToMany(mappedBy = "addedByEmployee", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Place> placesAdded = new ArrayList<>();
+
     public Employee(){}
 
     public Employee(String firstName, String lastName, String email) {
@@ -49,5 +54,14 @@ public class Employee {
     public String getEmail() {
         return email;
     }
+
+    public List<Place> getPlacesAdded() {
+        return placesAdded;
+    }
+
+    public void setPlacesAdded(List<Place> placesAdded) {
+        this.placesAdded = placesAdded;
+    }
+
 
 }

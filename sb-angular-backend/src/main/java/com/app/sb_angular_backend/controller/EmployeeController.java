@@ -42,6 +42,7 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_add:employees')")
     public ResponseEntity<Void> addNewEmployee(@RequestBody EmployeeRequest request) {
         // @RequestBody binds payload to DTO
         this.employeeService.addNewEmployee(request.getFirstName(), request.getLastName(), request.getEmail());
@@ -49,11 +50,13 @@ public class EmployeeController {
     }
 
     @GetMapping("/{uuid}")
+    @PreAuthorize("hasAuthority('SCOPE_read:employees')")
     public ResponseEntity<EmployeeResponse> getEmployee(@PathVariable UUID uuid) {
         return ResponseEntity.ok(this.employeeService.findEmployeeById(uuid));
     }
 
     @DeleteMapping("/{uuid}")
+    @PreAuthorize("hasAuthority('SCOPE_delete:employees')")
     public ResponseEntity<Void> deleteEmployee(@PathVariable UUID uuid) {
         this.employeeService.deleteEmployeeById(uuid);
         return ResponseEntity.noContent().build();

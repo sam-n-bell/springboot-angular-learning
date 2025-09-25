@@ -30,12 +30,17 @@ public class Place {
     @Column(name = "location", nullable = false, columnDefinition = "geometry(Point,4326)")
     private Point location;
 
+    @ManyToOne()
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee addedByEmployee;
+
     public Place(){}
 
-    public Place(String name, String description, Point location) {
+    public Place(String name, String description, Point location, Employee addedByEmployee) {
         this.name = name;
         this.description = description;
         this.location = location;
+        this.addedByEmployee = addedByEmployee;
     }
 
     public UUID getPlaceId() {
@@ -72,6 +77,14 @@ public class Place {
 
     public void setLocation(Point location) {
         this.location = location;
+    }
+
+    public Employee getAddedByEmployee() {
+        return addedByEmployee;
+    }
+
+    public void setAddedByEmployee(Employee addedByEmployee) {
+        this.addedByEmployee = addedByEmployee;
     }
 
 }

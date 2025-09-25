@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,13 +24,14 @@ public class EmployeeService {
     }
 
     public void addNewEmployee(String firstName, String lastName, String email) {
-        Employee employee = employeeRepository.findByEmail(email.toLowerCase());
-        if (employee != null) {
-            throw new ResourceAlreadyExistsException("This email already in use.");
+        Optional<Employee> employee = employeeRepository.findByEmail(email.toLowerCase());
+        if (employee.isEmpty()) {
+            employeeRepository.save(new Employee(
+                    firstName, lastName, email)
+            );
+        } else {
+            throw new ResourceAlreadyExistsException(email + " already in use");
         }
-        employeeRepository.save(new Employee(
-                firstName, lastName, email)
-        );
     }
 
     public List<EmployeeResponse> getAllEmployees() {
@@ -39,6 +41,10 @@ public class EmployeeService {
     public EmployeeResponse findEmployeeById(UUID uuid) {
         Employee employee = this.employeeRepository.findById(uuid).orElseThrow(ResourceNotFoundException::new);
         return EmployeeResponse.from(employee);
+    }
+
+    public Employee findByEmail(String email) {
+        return this.employeeRepository.findByEmail(email.toLowerCase()).orElseThrow(ResourceNotFoundException::new);
     }
 
     public void deleteEmployeeById(UUID uuid) {

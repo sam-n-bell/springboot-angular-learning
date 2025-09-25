@@ -1,9 +1,13 @@
 package com.app.sb_angular_backend.controller;
 import com.app.sb_angular_backend.dto.*;
+import com.app.sb_angular_backend.exception.ResourceNotFoundException;
+import com.app.sb_angular_backend.model.Employee;
+import com.app.sb_angular_backend.service.EmployeeService;
 import com.app.sb_angular_backend.service.PlaceService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,9 +22,12 @@ import java.util.UUID;
 public class PlaceController {
 
     private final PlaceService placeService;
+    private final EmployeeService employeeService;
 
-    public PlaceController(PlaceService placeService){
+    public PlaceController(PlaceService placeService, EmployeeService employeeService){
+
         this.placeService = placeService;
+        this.employeeService = employeeService;
     }
 
     @GetMapping("/nearest")
@@ -31,9 +38,14 @@ public class PlaceController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_add:places')")
-    public ResponseEntity<PlaceResponse> addNewPlace(@RequestBody @Valid PlaceRequest placeRequest) {
+    public ResponseEntity<PlaceResponse> addNewPlace(@RequestBody @Valid PlaceRequest placeRequest, JwtAuthenticationToken jwt) {
+        String fromUserEmail = jwt.getToken().getClaimAsString("devSBAuth0/email");
+        Employee employee = this.employeeService.findByEmail(fromUserEmail);
+        if (employee == null) {
+            throw new ResourceNotFoundException();
+        }
         // @Valid enforces the DTO @NotNull checks
-        PlaceResponse placeResponse = this.placeService.addNewPlace(placeRequest);
+        PlaceResponse placeResponse = this.placeService.addNewPlace(placeRequest, employee);
         return ResponseEntity.ok(placeResponse);
     }
 

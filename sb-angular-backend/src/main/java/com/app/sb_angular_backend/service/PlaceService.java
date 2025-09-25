@@ -3,6 +3,7 @@ package com.app.sb_angular_backend.service;
 
 import com.app.sb_angular_backend.dto.*;
 import com.app.sb_angular_backend.exception.ResourceNotFoundException;
+import com.app.sb_angular_backend.model.Employee;
 import com.app.sb_angular_backend.model.Place;
 import com.app.sb_angular_backend.repository.PlaceRepository;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -35,11 +36,11 @@ public class PlaceService {
         this.placeRepository = placeRepository;
     }
 
-    public PlaceResponse addNewPlace(PlaceRequest request) {
+    public PlaceResponse addNewPlace(PlaceRequest request, Employee byEmployee) {
         Point point = geometryFactory.createPoint(new Coordinate(request.getLongitude(), request.getLatitude()));
         point.setSRID(4326);
 
-        Place place = new Place(request.getName(), request.getDescription(), point);
+        Place place = new Place(request.getName(), request.getDescription(), point, byEmployee);
         placeRepository.save(place);
         placeRepository.flush();
 
