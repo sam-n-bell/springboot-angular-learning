@@ -2,6 +2,8 @@ package com.app.sb_angular_backend.controller;
 
 import com.app.sb_angular_backend.dto.PlaceRequest;
 import com.app.sb_angular_backend.dto.PlaceResponse;
+import com.app.sb_angular_backend.model.Employee;
+import com.app.sb_angular_backend.service.EmployeeService;
 import com.app.sb_angular_backend.service.PlaceService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -27,6 +30,9 @@ public class PlaceControllerTest {
 
     @MockitoBean
     private PlaceService placeService;
+
+    @MockitoBean
+    private EmployeeService employeeService;
 
     @Test
     void testAddPlace() throws Exception {
@@ -47,8 +53,19 @@ public class PlaceControllerTest {
                 OffsetDateTime.of(2025, 10, 10, 11, 11, 11, 0, ZoneOffset.UTC)
         );
 
-        when(placeService.addNewPlace(any(PlaceRequest.class))).thenReturn(response);
+        String testEmail = "fakeemail@gmail.org";
+        Employee mockEmployee = new Employee("fake", "fake", testEmail);
+        when(employeeService.findByEmail(testEmail)).thenReturn(mockEmployee);
+
+        when(placeService.addNewPlace(any(PlaceRequest.class), any(Employee.class))).thenReturn(response);
         mockMvc.perform(post("/api/v1/place")
+                        // with() applies a post-processor: function that modifies the request before it's sent
+                        // jwt() creates a JWT authentication post-processor that adds auth to test request
+                        // method on the JWT post-processor from ^ that lets me configure the JWT token
+                        // jwt.claim() adds a claim and sets the value for it
+                        .with(jwt().
+                                jwt(jwt -> jwt.claim("devSBAuth0/email", testEmail)))
+                                        //.claim("scope", "add:places")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(placeRequest)))
                 .andExpect(status().isOk())
